@@ -1,89 +1,234 @@
-# Backend Challenge 20230105
 
-## Introdução
+# FitnessFoods API
 
-Nesse desafio trabalharemos no desenvolvimento de uma REST API para utilizar os dados do projeto Open Food Facts, que é um banco de dados aberto com informação nutricional de diversos produtos alimentícios.
+## Descrição do Projeto
 
-O projeto tem como objetivo dar suporte a equipe de nutricionistas da empresa Fitness Foods LC para que eles possam revisar de maneira rápida a informação nutricional dos alimentos que os usuários publicam pela aplicação móvel.
+Este projeto é uma API desenvolvida para importar, processar e gerenciar dados de produtos alimentícios. Utilizando dados de um desafio fornecido pela **Coodesh**, a API oferece funcionalidades como importação de produtos em lote, listagem de produtos e manipulação de dados no banco de dados MongoDB.
 
-### Antes de começar
- 
-- O projeto deve utilizar a Linguagem específica na avaliação. Por exempo: Python, R, Scala e entre outras;
-- Considere como deadline da avaliação a partir do início do teste. Caso tenha sido convidado a realizar o teste e não seja possível concluir dentro deste período, avise a pessoa que o convidou para receber instruções sobre o que fazer.
-- Documentar todo o processo de investigação para o desenvolvimento da atividade (README.md no seu repositório); os resultados destas tarefas são tão importantes do que o seu processo de pensamento e decisões à medida que as completa, por isso tente documentar e apresentar os seus hipóteses e decisões na medida do possível.
+## Tecnologias Utilizadas
 
-## O projeto
- 
-- Criar um banco de dados MongoDB usando Atlas: https://www.mongodb.com/cloud/atlas ou algum Banco de Dados SQL se não sentir confortável com NoSQL;
-- Criar uma REST API com as melhores práticas de desenvolvimento, Design Patterns, SOLID e DDD.
-- Integrar a API com o banco de dados criado para persistir os dados
-- Recomendável usar Drivers oficiais para integração com o DB
-- Desenvolver Testes Unitários
+- **Linguagem:** C# (.NET 9.0)
+- **Framework:** ASP.NET Core 9.0
+- **Banco de Dados:** MongoDB
+- **Testes Unitários:** xUnit, Moq
+- **Infraestrutura:** Docker, Docker Compose
+- **API:** RESTful
 
-### Modelo de Dados:
+## Como Instalar e Usar o Projeto
 
-Para a definição do modelo, consultar o arquivo [products.json](./products.json) que foi exportado do Open Food Facts, um detalhe importante é que temos dois campos personalizados para poder fazer o controle interno do sistema e que deverão ser aplicados em todos os alimentos no momento da importação, os campos são:
+### 1. **Clonando o Repositório**
 
-- `imported_t`: campo do tipo Date com a dia e hora que foi importado;
-- `status`: campo do tipo Enum com os possíveis valores draft, trash e published;
+Clone o repositório para a sua máquina local:
 
-### Sistema do CRON
+```bash
+git clone https://github.com/usuario/FitnessFoodsApi.git
+cd FitnessFoodsApi
+```
 
-Para prosseguir com o desafio, precisaremos criar na API um sistema de atualização que vai importar os dados para a Base de Dados com a versão mais recente do [Open Food Facts](https://br.openfoodfacts.org/data) uma vez ao día. Adicionar aos arquivos de configuração o melhor horário para executar a importação.
+### 2. **Instalando Dependências (Modo Manual)**
 
-A lista de arquivos do Open Food, pode ser encontrada em: 
+Restabeleça as dependências do projeto:
 
-- https://challenges.coode.sh/food/data/json/index.txt
-- https://challenges.coode.sh/food/data/json/data-fields.txt
+```bash
+dotnet restore
+```
 
-Onde cada linha representa um arquivo que está disponível em https://challenges.coode.sh/food/data/json/{filename}.
+### 3. **Compilando e Executando o Projeto (Modo Manual)**
 
-É recomendável utilizar uma Collection secundária para controlar os históricos das importações e facilitar a validação durante a execução.
+Para compilar e rodar a aplicação manualmente no seu ambiente local:
 
-Ter em conta que:
+1. Abra o terminal ou prompt de comando e execute o comando abaixo para rodar a aplicação:
 
-- Todos os produtos deverão ter os campos personalizados `imported_t` e `status`.
-- Limitar a importação a somente 100 produtos de cada arquivo.
+   ```bash
+   dotnet run
+   ```
 
-### A REST API
+2. O projeto será iniciado no `http://localhost:5000`.
 
-Na REST API teremos um CRUD com os seguintes endpoints:
+   **Nota:** Caso você queira rodar a aplicação em outra porta, altere as configurações no arquivo `appsettings.json` ou passe um argumento de porta ao executar a aplicação:
 
- - `GET /`: Detalhes da API, se conexão leitura e escritura com a base de dados está OK, horário da última vez que o CRON foi executado, tempo online e uso de memória.
- - `PUT /products/:code`: Será responsável por receber atualizações do Projeto Web
- - `DELETE /products/:code`: Mudar o status do produto para `trash`
- - `GET /products/:code`: Obter a informação somente de um produto da base de dados
- - `GET /products`: Listar todos os produtos da base de dados, adicionar sistema de paginação para não sobrecarregar o `REQUEST`.
+   ```bash
+   dotnet run --urls "http://localhost:8080"
+   ```
 
-## Extras
+### 4. **Rodando o Projeto com Docker**
 
-- **Diferencial 1** Configuração de um endpoint de busca com Elastic Search ou similares;
-- **Diferencial 2** Configurar Docker no Projeto para facilitar o Deploy da equipe de DevOps;
-- **Diferencial 3** Configurar um sistema de alerta se tem algum falho durante o Sync dos produtos;
-- **Diferencial 4** Descrever a documentação da API utilizando o conceito de Open API 3.0;
-- **Diferencial 5** Escrever Unit Tests para os endpoints  GET e PUT do CRUD;
-- **Diferencial 6** Escrever um esquema de segurança utilizando `API KEY` nos endpoints. Ref: https://learning.postman.com/docs/sending-requests/authorization/#api-key
+#### Pré-requisitos:
 
+Certifique-se de ter o Docker instalado na sua máquina. Se não tiver, [instale o Docker](https://docs.docker.com/get-docker/) primeiro.
 
+#### Passos:
 
-## Readme do Repositório
+1. **Criando a Imagem Docker:**
 
-- Deve conter o título do projeto
-- Uma descrição sobre o projeto em frase
-- Deve conter uma lista com linguagem, framework e/ou tecnologias usadas
-- Como instalar e usar o projeto (instruções)
-- Não esqueça o [.gitignore](https://www.toptal.com/developers/gitignore)
-- Se está usando github pessoal, referencie que é um challenge by coodesh:  
+   No terminal, navegue até a raiz do projeto e execute o comando abaixo para criar a imagem Docker:
 
->  This is a challenge by [Coodesh](https://coodesh.com/)
+   ```bash
+   docker build -t fitnessfoodsapi .
+   ```
 
-## Finalização e Instruções para a Apresentação
+2. **Executando o Projeto com Docker:**
 
-1. Adicione o link do repositório com a sua solução no teste
-2. Adicione o link da apresentação do seu projeto no README.md.
-3. Verifique se o Readme está bom e faça o commit final em seu repositório;
-4. Envie e aguarde as instruções para seguir. Sucesso e boa sorte. =)
+   Agora, execute o Docker Compose para subir a aplicação e o MongoDB em containers separados:
 
-## Suporte
+   ```bash
+   docker-compose up -d
+   ```
 
-Use a [nossa comunidade](https://discord.gg/rdXbEvjsWu) para tirar dúvidas sobre o processo ou envie uma mensagem diretamente a um especialista no chat da plataforma. 
+3. **Verificando os Containers:**
+
+   Após rodar o comando acima, o Docker irá iniciar os containers. Para verificar se tudo está rodando corretamente, use:
+
+   ```bash
+   docker ps
+   ```
+
+4. **Acessando a Aplicação:**
+
+   A API estará disponível no endereço `http://localhost:5000`. Para garantir que tudo foi configurado corretamente, abra o navegador e acesse a URL.
+
+#### Docker Compose
+
+Aqui está o arquivo `docker-compose.yml` que será utilizado para rodar o MongoDB e a aplicação:
+
+```yaml
+version: '3.4'
+
+services:
+  fitnessfoodsapi:
+    image: fitnessfoodsapi
+    build:
+      context: .
+    ports:
+      - "5000:5000"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - mongo
+    networks:
+      - fitnessfoods_network
+
+  mongo:
+    image: mongo:latest
+    container_name: mongo_db
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - fitnessfoods_network
+
+volumes:
+  mongo_data:
+
+networks:
+  fitnessfoods_network:
+    driver: bridge
+```
+
+#### Parâmetros de Configuração
+
+- **Portas:**
+  - **API**: `5000`
+  - **MongoDB**: `27017` (padrão do MongoDB)
+
+#### Como Configurar Variáveis de Ambiente:
+
+Se você precisa alterar configurações como a string de conexão do banco de dados, você pode adicionar um arquivo `.env` na raiz do projeto. O Docker irá utilizar as variáveis definidas nesse arquivo para configurar o ambiente da aplicação.
+
+Exemplo de conteúdo do arquivo `.env`:
+
+```env
+MONGO_CONNECTION_STRING=mongodb://mongo:27017/FitnessFoodsDb
+```
+
+O arquivo `.env` será carregado automaticamente pelo Docker, configurando as variáveis para sua aplicação.
+
+### 5. **Como Usar a API**
+
+#### Importação de Produtos
+
+Para importar produtos para o sistema, utilize o endpoint `POST /api/import` com uma URL válida que aponte para um arquivo JSON comprimido.
+
+**Exemplo de requisição:**
+
+```http
+POST http://localhost:5000/api/import?url=https://link-to-product-file.com
+```
+
+#### Listar Produtos
+
+Para listar produtos, use o endpoint `GET /api/products`.
+
+**Exemplo de requisição:**
+
+```http
+GET http://localhost:5000/api/products?page=1&pageSize=10
+```
+
+#### Obter Produto por Código
+
+Para obter detalhes de um produto pelo código, use o endpoint `GET /api/products/{code}`.
+
+**Exemplo de requisição:**
+
+```http
+GET http://localhost:5000/api/products/0000000000017
+```
+
+#### Atualizar Produto
+
+Para atualizar um produto existente, use o endpoint `PUT /api/products/{code}`. O corpo da requisição deve conter as informações do produto a ser atualizado.
+
+**Exemplo de requisição:**
+
+```http
+PUT http://localhost:5000/api/products/0000000000017
+Content-Type: application/json
+
+{
+  "product_name": "Updated Product Name",
+  "quantity": "Updated Quantity"
+}
+```
+
+#### Excluir Produto
+
+Para excluir ou marcar um produto como "excluído", use o endpoint `DELETE /api/products/{code}`.
+
+**Exemplo de requisição:**
+
+```http
+DELETE http://localhost:5000/api/products/0000000000017
+```
+
+## .gitignore
+
+Este repositório contém um arquivo `.gitignore` que ignora arquivos temporários e específicos de IDE, como:
+
+```gitignore
+# Build Folders
+bin/
+obj/
+
+# User-specific files
+.vscode/
+.idea/
+
+# User-specific files generated by Visual Studio
+.vs/
+*.user
+
+# IDE specific files
+*.suo
+*.userosscache
+*.sln.docstates
+```
+
+## Licença
+
+Este projeto está licenciado sob a [MIT License](LICENSE).
+
+## Desafio by Coodesh
+
+Este projeto faz parte de um desafio promovido pela **Coodesh** para avaliação de habilidades em desenvolvimento de software e implementação de APIs com .NET e MongoDB.

@@ -1,0 +1,10 @@
+# Please refer https://aka.ms/HTTPSinContainer on how to setup an https developer certificate for your ASP.NET Core service.
+
+services:
+  fitnessfoodsapi:
+    image: fitnessfoodsapi
+    build:
+      context: .
+      dockerfile: FitnessFoods.API/Dockerfile
+    ports:
+      - 5246:5246

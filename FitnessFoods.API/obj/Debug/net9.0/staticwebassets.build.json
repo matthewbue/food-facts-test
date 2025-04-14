@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "LKYUQzLfHdao0BbgG4q0JLF9eOtPogiZsKmfV1gKJS8=",
+  "Source": "FitnessFoods.API",
+  "BasePath": "_content/FitnessFoods.API",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}
